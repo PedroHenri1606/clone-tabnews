@@ -1,5 +1,5 @@
-function Home(){
-    return <p>Olá Mundo</p>
+function Home() {
+  return <p>Olá Mundo</p>;
 }
 
 export default Home;
