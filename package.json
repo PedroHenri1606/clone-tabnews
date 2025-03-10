@@ -5,10 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run docker:up && next dev",
+    "build": "npm run docker:build && next build",
+    "start": "npm run docker:up && next start",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
+    "docker:build": "docker compose -f infra/compose.yaml build",
     "docker:up": "docker compose -f infra/compose.yaml up -d",
     "docker:start": "docker compose -f infra/compose.yaml start",
     "docker:stop": "docker compose -f infra/compose.yaml stop",
