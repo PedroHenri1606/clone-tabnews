@@ -1,5 +1,5 @@
 function Home() {
-  return <p>Fin Host, em construção - por @pedrohviera</p>;
+  return <p>Larissa eu te amo</p>;
 }
 
 export default Home;
