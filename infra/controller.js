@@ -13,11 +13,11 @@ function onNoMatchHandler(request, response) {
 
 function onErrorHandler(error, request, response) {
   if (error instanceof ValidationError) {
-    response.status(error.statusCode).json(error);
+    return response.status(error.statusCode).json(error);
   }
 
   if (error instanceof NotFoundError) {
-    response.status(error.statusCode).json(error);
+    return response.status(error.statusCode).json(error);
   }
 
   const publicError = new InternalServerError({
