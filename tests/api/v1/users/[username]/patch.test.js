@@ -6,7 +6,6 @@ beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
   await orchestrator.runPendingMigrations();
-  await orchestrator.addUserTest();
 });
 
 describe("PATCH to /api/v1/users/[username]", () => {
@@ -29,38 +28,21 @@ describe("PATCH to /api/v1/users/[username]", () => {
     });
 
     test("With duplicated `username`", async () => {
-      await fetch("http:localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "UsernameTest1",
-          email: "emailtest1@curso.dev",
-          password: "senha@123",
-        }),
+      await orchestrator.createUser({
+        username: "UsernameTest1",
       });
 
-      await fetch("http:localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "UsernameTest2",
-          email: "emailtest2@curso.dev",
-          password: "senha@123",
-        }),
+      await orchestrator.createUser({
+        username: "UsernameTest2",
       });
 
       const response = await fetch(
-        "http:localhost:3000/api/v1/users/UsernameTest2",
+        "http:localhost:3000/api/v1/users/UsernameTest1",
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: "UsernameTest1",
-            email: "emailtest2@curso.dev",
+            username: "UsernameTest2",
           }),
         },
       );
@@ -76,37 +58,20 @@ describe("PATCH to /api/v1/users/[username]", () => {
     });
 
     test("With duplicated `email`", async () => {
-      await fetch("http:localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "UsernameTest3",
-          email: "emailtest3@curso.dev",
-          password: "senha@123",
-        }),
+      const user1 = await orchestrator.createUser({
+        email: "emailtest3@curso.dev",
       });
 
-      await fetch("http:localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "UsernameTest4",
-          email: "emailtest4@curso.dev",
-          password: "senha@123",
-        }),
+      await orchestrator.createUser({
+        email: "emailtest4@curso.dev",
       });
 
       const response = await fetch(
-        "http:localhost:3000/api/v1/users/UsernameTest3",
+        `http:localhost:3000/api/v1/users/${user1.username}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: "UsernameTest3",
             email: "emailtest4@curso.dev",
           }),
         },
@@ -123,16 +88,8 @@ describe("PATCH to /api/v1/users/[username]", () => {
     });
 
     test("With unique `username`", async () => {
-      await fetch("http:localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "UsernameTest5",
-          email: "emailtest5@curso.dev",
-          password: "senha@123",
-        }),
+      await orchestrator.createUser({
+        username: "UsernameTest5",
       });
 
       const response = await fetch(

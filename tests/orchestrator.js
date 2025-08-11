@@ -1,6 +1,8 @@
 import retry from "async-retry";
 import database from "infra/database.js";
 import migrator from "models/migrator.js";
+import { faker } from "@faker-js/faker";
+import user from "models/user";
 
 async function waitForAllServices() {
   await waitForWebService();
@@ -29,17 +31,12 @@ async function runPendingMigrations() {
   await migrator.runMigrations();
 }
 
-async function addUserTest() {
-  await fetch("http:localhost:3000/api/v1/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username: "UsernameTest",
-      email: "emailtest@curso.dev",
-      password: "senha@123",
-    }),
+async function createUser(newUser) {
+  return await user.create({
+    username:
+      newUser.username || faker.internet.username().replace(/[_.-]/g, ""),
+    email: newUser.email || faker.internet.email(),
+    password: newUser.password || "validpassword",
   });
 }
 
@@ -47,7 +44,7 @@ const orchestrator = {
   waitForAllServices,
   clearDatabase,
   runPendingMigrations,
-  addUserTest,
+  createUser,
 };
 
 export default orchestrator;
