@@ -11,3 +11,9 @@ router.get(async (request, response) => {
 
   return response.status(200).json(userFound);
 });
+
+router.patch(async (request, response) => {
+  const updatedUser = await user.update(request.query.username, request.body);
+
+  return response.status(200).json(updatedUser);
+});
