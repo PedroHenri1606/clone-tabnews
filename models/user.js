@@ -1,4 +1,5 @@
 import database from "infra/database";
+import password from "models/password.js";
 import {
   NotFoundError,
   ServiceError,
@@ -7,6 +8,8 @@ import {
 
 async function create(userInputValues) {
   try {
+    await hashPasswordInObejct(userInputValues);
+
     const results = await database.query({
       text: `
         INSERT INTO 
@@ -68,9 +71,16 @@ async function findOneByUsername(username) {
   });
 }
 
+async function hashPasswordInObejct(userInputValues) {
+  const hashedPassword = await password.hash(userInputValues.password);
+
+  userInputValues.password = hashedPassword;
+}
+
 const user = {
   create,
   findOneByUsername,
+  hashPasswordInObejct,
 };
 
 export default user;
